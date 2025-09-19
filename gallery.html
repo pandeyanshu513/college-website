@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | UCET, Hazaribag</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        /* Header Styles */
+        .top-bar {
+            background-color: #0d47a1; /* Darker blue for top bar */
+            color: #fff;
+            padding: 10px 0;
+            font-size: 0.9em;
+        }
+        .top-bar a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .top-bar a:hover {
+            text-decoration: underline;
+        }
+        .top-bar-left .brand-link {
+            display: flex;
+            align-items: center;
+        }
+        .top-bar-left img {
+            height: 40px; /* Adjust logo height */
+            margin-right: 10px;
+        }
+        .college-name {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .social-links a {
+            margin-left: 10px;
+            font-size: 1.1em;
+        }
+        .social-links a:hover {
+            color: #ccc;
+        }
+        .main-navbar {
+            background-color: #1976d2; /* Main blue for navbar */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .main-navbar .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+        .main-navbar .nav-link {
+            color: #fff !important;
+            padding: 15px 20px;
+            transition: background-color 0.3s ease;
+        }
+        .main-navbar .nav-link:hover,
+        .main-navbar .nav-link.active {
+            background-color: #1565c0; /* Darker blue on hover/active */
+            border-radius: 4px;
+        }
+        .main-navbar .dropdown-menu {
+            background-color: #1976d2;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .main-navbar .dropdown-item {
+            color: #fff;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;
+        }
+        .main-navbar .dropdown-item:hover {
+            background-color: #1565c0;
+            color: #fff;
+        }
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+        
+        /* Hero Section */
+        #hero-slider {
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            color: white;
+            padding: 80px 0;
+        }
+        #hero-slider::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+        }
+        #hero-slider .text-center {
+            position: relative;
+            z-index: 2;
+        }
+        .breadcrumb-text {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Content Section */
+        .content-section {
+            padding-top: 60px;
+            padding-bottom: 60px;
+        }
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -10px;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: #1976d2;
+            border-radius: 2px;
+        }
+        .section-title p {
+            font-size: 1.1rem;
+            color: #6c757d;
+        }
+
+        /* Filter Buttons */
+        #filter-buttons .btn {
+            margin: 5px;
+            border-radius: 50px;
+            padding: 8px 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        #filter-buttons .btn-outline-dark {
+            color: #343a40;
+            border-color: #343a40;
+        }
+        #filter-buttons .btn-outline-dark:hover,
+        #filter-buttons .btn-outline-dark.active {
+            background-color: #1976d2;
+            border-color: #1976d2;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Gallery Grid */
+        .gallery-item {
+            opacity: 0; /* Hidden by default for fade-in */
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+        .gallery-item.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .gallery-item .card {
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .gallery-item .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .gallery-item .card-img-top {
+            height: 220px;
+            object-fit: cover;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+        .gallery-item .card:hover .card-img-top {
+            transform: scale(1.05);
+        }
+        .gallery-item .card a {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+        .gallery-item .card a:hover {
+            cursor: zoom-in;
+        }
+
+        /* Modal */
+        #galleryModal .modal-content {
+            border-radius: 10px;
+        }
+        #galleryModal .modal-header {
+            border-bottom: none;
+        }
+        #galleryModal .modal-title {
+            font-weight: bold;
+        }
+        #galleryModal .modal-body img {
+            max-height: 80vh; /* Limit modal image height */
+            width: auto;
+        }
+
+        /* Footer Styles */
+        .main-footer {
+            background-color: #212529; /* Dark footer background */
+            color: #f8f9fa;
+            font-size: 0.9em;
+        }
+        .main-footer p, .main-footer li {
+            color: #adb5bd;
+        }
+        .main-footer a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .main-footer a:hover {
+            color: #fff;
+        }
+        .main-footer .footer-links li {
+            margin-bottom: 8px;
+        }
+        .main-footer .social-icon {
+            font-size: 1.5em;
+            margin-right: 15px;
+            transition: color 0.3s ease;
+        }
+        .main-footer .social-icon:hover {
+            color: #1976d2; /* Highlight on hover */
+        }
+        .footer-bottom {
+            background-color: #1a1d20;
+            padding: 15px 0;
+            border-top: 1px solid #343a40;
+            font-size: 0.85em;
+        }
+
+        /* Fade-in animation */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="top-bar">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div class="top-bar-left">
+                    <a class="brand-link" href="index.html">
+                        <img src="logo/logo-vbu.png" alt="VBU Logo"> <span class="college-name d-none d-lg-inline">University College of Engineering & Technology</span>
+                    </a>
+                </div>
+                <div id="header-right-content" class="top-bar-right d-flex align-items-center">
+                    <div class="social-links me-3">
+                        <a href="#" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <a href="login.html" class="btn btn-primary btn-sm">LOGIN</a>
+                </div>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg navbar-dark main-navbar sticky-top"> <div class="container">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Departments</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="department.html">All B.Tech Departments</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="administration.html">Administration</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Admissions</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="admission-form.html">Admission Form</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Examinations</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="examination-form.html">Exam Form</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link active" href="gallery.html">Gallery</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Alumni</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="alumni-form.html">Alumni Registration</a></li>
+                                <li><a class="dropdown-item" href="alumni-directory.html">Alumni Directory</a></li>
+                            </ul>
+                        </li>
+                         <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">About VBU</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="https://www.vbu.ac.in/login">VBU Link</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="https://www.vbu.ac.in/about_us">About VBU</a></li>
+                                <li><a class="dropdown-item" href="https://www.vbu.ac.in/calendar">Calender</a></li>
+                                <li><a class="dropdown-item" href="https://www.vbu.ac.in/contactus">Contact us</a></li>
+                                <li><a class="dropdown-item" href="https://www.vbu.ac.in/gallery">Gallary</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section id="hero-slider" class="d-flex align-items-center justify-content-center" style="height:50vh; background-image: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070');">
+        <div class="text-center text-white">
+            <h1 class="display-3 fw-bold">Campus Glimpses</h1>
+            <p class="breadcrumb-text">Home / Gallery</p>
+        </div>
+    </section>
+
+    <main class="container content-section">
+        <div class="text-center section-title fade-in-section">
+            <h2 class="fw-bold">Our Photo Gallery</h2>
+            <p class="lead text-muted">A visual journey through our vibrant college life and events.</p>
+        </div>
+
+        <div id="filter-buttons" class="text-center mb-5 fade-in-section">
+            <button class="btn btn-outline-dark active" data-filter="all">All</button>
+            <button class="btn btn-outline-dark" data-filter="campus">Campus Life</button>
+            <button class="btn btn-outline-dark" data-filter="events">Events</button>
+            <button class="btn btn-outline-dark" data-filter="academics">Academics</button>
+        </div>
+
+        <div class="row g-4" id="gallery-grid">
+            </div>
+    </main>
+
+    <div class="modal fade" id="galleryModal" tabindex="-1" aria-labelledby="galleryModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="galleryModalLabel">Gallery Image</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <img src="" class="img-fluid" id="modalImage" alt="Gallery Image">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container py-5">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <img src="logo/logo-vbu.png" alt="VBU Logo" style="height: 60px; margin-bottom: 15px;">
+                    <h5 class="text-white">University College of Engineering Technology<br>
+                        Vinoba Bhave University(Hazaribag)</h5>
+                    <p>Ranchi, Patna Road, NH - 33, Hazaribagh, Jharkhand - 825301</p>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
+                    <h5 class="text-white">Quick Links</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="administration.html">Administration</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5 class="text-white">Contact Info</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-phone me-2"></i> 05646-261929</li>
+                        <li><i class="fas fa-envelope me-2"></i> vbuucet@gmail.com</li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white">Connect With Us</h5>
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://x.com/NssVbu" target="_blank" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/ucetvbu2009/?hl=en" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom text-center py-3">
+            <p class="mb-0">&copy; 2025 University College of Engineering Technology, Hazaribag. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // --- 1. IMAGE DATA ---
+            // Replace these with your actual image paths and categories.
+            const images = [
+                { src: 'images/bg1.jpg', category: 'campus', title: 'Grand University Entrance' },
+                { src: 'images/bg2.jpg', category: 'events', title: 'Vibrant Fresher\'s Welcome' },
+                { src: 'images/bg3.jpg', category: 'academics', title: 'Focused Study Session' },
+                { src: 'images/image-0.jpg', category: 'campus', title: 'Lush Campus Greenery' },
+                { src: 'https://images.unsplash.com/photo-1562774053-701939374585?w=600&auto=format&fit=crop&q=80', category: 'academics', title: 'Engaging Lecture Hall' },
+                { src: 'https://images.unsplash.com/photo-1531058020387-3be344556be6?w=600&auto=format&fit=crop&q=80', category: 'events', title: 'Annual Cultural Fest' },
+                { src: 'https://images.unsplash.com/photo-1517840901100-8179e982acb7?w=600&auto=format&fit=crop&q=80', category: 'campus', title: 'Modern Library Interior' },
+                { src: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&auto=format&fit=crop&q=80', category: 'academics', title: 'Interactive Classroom' },
+                { src: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&auto=format&fit=crop&q=80', category: 'campus', title: 'Evening Campus Glow' },
+                { src: 'https://images.unsplash.com/photo-1498243691581-b145c3f54bfed?w=600&auto=format&fit=crop&q=80', category: 'events', title: 'Sports Day Fun' },
+                { src: 'https://images.unsplash.com/photo-1543269824-cb8037305d21?w=600&auto=format&fit=crop&q=80', category: 'academics', title: 'Science Lab Experiment' },
+                { src: 'https://images.unsplash.com/photo-1501258601-57626993a408?w=600&auto=format&fit=crop&q=80', category: 'campus', title: 'Student Dormitory' },
+            ];
+
+            const galleryGrid = document.getElementById('gallery-grid');
+            const filterButtons = document.querySelectorAll('#filter-buttons .btn');
+            const galleryModalElement = document.getElementById('galleryModal');
+            const galleryModal = new bootstrap.Modal(galleryModalElement);
+            const modalImage = document.getElementById('modalImage');
+            const modalTitle = document.getElementById('galleryModalLabel');
+
+            // --- 2. FUNCTION TO DISPLAY IMAGES ---
+            function displayImages(filter = 'all') {
+                galleryGrid.innerHTML = ''; // Clear existing images
+                const filteredImages = (filter === 'all') ? images : images.filter(img => img.category === filter);
+
+                filteredImages.forEach(image => {
+                    const imageContainer = document.createElement('div');
+                    // Start hidden, then add 'show' class for fade-in effect
+                    imageContainer.className = 'col-lg-4 col-md-6 gallery-item'; 
+                    
+                    imageContainer.innerHTML = `
+                        <div class="card h-100 shadow-sm border-0">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#galleryModal" data-img-src="${image.src}" data-img-title="${image.title}">
+                                <img src="${image.src}" class="card-img-top" alt="${image.title}">
+                            </a>
+                        </div>
+                    `;
+                    galleryGrid.appendChild(imageContainer);
+                });
+
+                // Trigger fade-in for newly added items
+                setTimeout(() => {
+                    document.querySelectorAll('.gallery-item').forEach(item => {
+                        item.classList.add('show');
+                    });
+                }, 50); // Small delay to ensure CSS transition applies
+            }
+
+            // --- 3. FILTER BUTTONS LOGIC ---
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    // Manage active class
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Filter images
+                    const filterValue = this.getAttribute('data-filter');
+                    displayImages(filterValue);
+                });
+            });
+
+            // --- 4. MODAL LOGIC ---
+            galleryModalElement.addEventListener('show.bs.modal', function (event) {
+                const triggerLink = event.relatedTarget; // Get the link that was clicked
+                
+                // Get data attributes from the link
+                const imageSrc = triggerLink.getAttribute('data-img-src');
+                const imageTitle = triggerLink.getAttribute('data-img-title');
+                
+                // Update the modal's content
+                modalImage.src = imageSrc;
+                modalImage.alt = imageTitle;
+                modalTitle.textContent = imageTitle;
+            });
+
+            // --- 5. FADE-IN SECTION ON SCROLL (for the H2 and filter buttons) ---
+            const fadeElements = document.querySelectorAll('.fade-in-section');
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target); // Stop observing once visible
+                    }
+                });
+            }, { threshold: 0.1 }); // Trigger when 10% of the element is visible
+
+            fadeElements.forEach(element => {
+                observer.observe(element);
+            });
+
+
+            // --- 6. INITIAL DISPLAY ---
+            displayImages('all'); // Display all images when the page first loads
+        });
+    </script>
+</body>
+</html>
